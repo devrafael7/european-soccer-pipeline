@@ -4,7 +4,7 @@ from airflow.sdk import dag, task
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.providers.standard.operators.bash import BashOperator
 
-
+#use this dag for ec2 build
 @dag(
     dag_id="european_soccer_pipeline",
     description="Pipeline completa do European Soccer Database",
@@ -44,6 +44,10 @@ def european_soccer_pipeline():
     dbt_build = BashOperator(
         task_id="dbt_build",
         bash_command="""
+            dbt deps\
+            --project-dir /opt/airflow/dbt/europan_soccer_dbt \
+            --profiles-dir /home/airflow/.dbt &&
+
             dbt build \
             --project-dir /opt/airflow/dbt/europan_soccer_dbt \
             --profiles-dir /home/airflow/.dbt
