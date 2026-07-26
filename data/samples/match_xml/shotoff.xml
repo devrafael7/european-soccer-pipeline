@@ -1,0 +1,17 @@
+<shotoff><value><stats><shotoff>1</shotoff></stats><event_incident_typefk>317</event_incident_typefk><coordinates><value>14</value><value>5</value></coordinates><elapsed>2</elapsed><subtype>deflected</subtype><player1>40719</player1><sortorder>0</sortorder><team>10268</team><n>17</n><type>shotoff</type><id>4417459</id></value>
+
+<value><stats><shotoff>1</shotoff></stats><event_incident_typefk>47</event_incident_typefk><coordinates><value>20</value><value>5</value></coordinates><elapsed>10</elapsed><subtype>header</subtype><player1>40668</player1><sortorder>1</sortorder><team>10268</team><n>78</n><type>shotoff</type><id>4417651</id></value>
+
+<value><stats><shotoff>1</shotoff></stats><event_incident_typefk>47</event_incident_typefk><coordinates><value>24</value><value>63</value></coordinates><elapsed>30</elapsed><subtype>header</subtype><player1>37653</player1><sortorder>2</sortorder><team>9783</team><n>142</n><type>shotoff</type><id>4418127</id></value>
+
+<value><stats><shotoff>1</shotoff></stats><event_incident_typefk>81</event_incident_typefk><coordinates><value>12</value><value>13</value></coordinates><elapsed>38</elapsed><subtype>direct_freekick</subtype><player1>108572</player1><sortorder>0</sortorder><team>10268</team><n>194</n><type>shotoff</type><id>4418320</id></value>
+
+<value><stats><shotoff>1</shotoff></stats><event_incident_typefk>53</event_incident_typefk><coordinates><value>31</value><value>58</value></coordinates><elapsed>47</elapsed><subtype>volley</subtype><player1>37653</player1><sortorder>2</sortorder><team>9783</team><n>241</n><type>shotoff</type><id>4418380</id></value>
+
+<value><stats><shotoff>1</shotoff></stats><event_incident_typefk>9</event_incident_typefk><coordinates><value>18</value><value>57</value></coordinates><elapsed>48</elapsed><subtype>distance</subtype><player1>194660</player1><sortorder>3</sortorder><team>9783</team><n>247</n><type>shotoff</type><id>4418385</id></value>
+
+<value><stats><shotoff>1</shotoff></stats><event_incident_typefk>588</event_incident_typefk><coordinates><value>19</value><value>65</value></coordinates><elapsed>50</elapsed><subtype>big chance header</subtype><player1>37653</player1><sortorder>0</sortorder><team>9783</team><n>256</n><type>shotoff</type><id>4418393</id></value>
+
+<value><stats><shotoff>1</shotoff></stats><event_incident_typefk>53</event_incident_typefk><coordinates><value>18</value><value>65</value></coordinates><elapsed>77</elapsed><subtype>volley</subtype><player1>41268</player1><sortorder>3</sortorder><team>9783</team><n>399</n><type>shotoff</type><id>4418525</id></value>
+
+</shotoff>

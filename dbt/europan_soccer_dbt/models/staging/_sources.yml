@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "raw schema with tables from s3 bucket"
+    database: EUROPEAN_SOCCER_DB
+    schema: RAW
+
+    tables:
+      - name: country
+        description: "Country dimension."
+
+      - name: league
+        description: "League dimension."
+
+      - name: match
+        description: "Football matches."
+
+      - name: player_attributes
+        description: "Historical players attributes."
+
+      - name: player
+        description: "Players."
+
+      - name: team
+        description: "Teams."
+
+      - name: team_attributes
+        description: "Historical team attributes." 
+

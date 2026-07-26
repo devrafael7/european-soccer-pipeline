@@ -1,0 +1,497 @@
+version: 2
+
+models:
+  - name: dim_countries
+    description: >
+      Dimensão de países. Possui uma linha por país e é utilizada para
+      contextualizar ligas, partidas e agregações geográficas.
+    columns:
+      - name: country_id
+        description: Chave primária do país.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: country_name
+        description: Nome descritivo do país.
+        data_tests:
+          - not_null
+
+  - name: dim_leagues
+    description: >
+      Dimensão de ligas. Possui uma linha por liga e mantém a associação
+      lógica entre a competição e seu país.
+    columns:
+      - name: league_id
+        description: Chave primária da liga.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: country_id
+        description: Chave estrangeira lógica para dim_countries.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_countries')
+                field: country_id
+
+      - name: league_name
+        description: Nome da liga ou competição.
+        data_tests:
+          - not_null
+
+  - name: dim_teams
+    description: >
+      Dimensão de times. Possui uma linha por time e armazena seus
+      identificadores naturais e nomes descritivos.
+    columns:
+      - name: team_id
+        description: Chave primária interna do time.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: team_api_id
+        description: Identificador natural do time utilizado pela fonte.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: team_fifa_api_id
+        description: Identificador do time na FIFA quando disponível.
+
+      - name: team_long_name
+        description: Nome completo do time.
+        data_tests:
+          - not_null
+
+      - name: team_short_name
+        description: Nome curto ou sigla do time.
+
+  - name: dim_players
+    description: >
+      Dimensão de jogadores. Possui uma linha por jogador e concentra
+      atributos descritivos relativamente estáveis.
+    columns:
+      - name: player_id
+        description: Chave primária interna do jogador.
+        data_tests:
+          - not_null
+
+      - name: player_api_id
+        description: Identificador natural do jogador utilizado pela fonte e pelos eventos.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: player_name
+        description: Nome do jogador.
+        data_tests:
+          - not_null
+
+      - name: player_birthday
+        description: Data de nascimento do jogador.
+
+      - name: height
+        description: Altura registrada do jogador.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
+              config:
+                where: height is not null
+
+      - name: weight
+        description: Peso registrado do jogador.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
+              config:
+                where: weight is not null
+
+  - name: fact_matches
+    description: >
+      Tabela fato de partidas com granularidade de uma linha por partida.
+      Contém dimensões de contexto, placar, resultado e métricas agregadas
+      dos eventos da partida.
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "total_goals = home_team_score + away_team_score"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "home_team_api_id <> away_team_api_id"
+
+    columns:
+      - name: match_id
+        description: Chave primária natural da partida.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: match_date
+        description: Data em que a partida ocorreu.
+        data_tests:
+          - not_null
+
+      - name: match_season
+        description: Temporada da partida, como 2015/2016.
+        data_tests:
+          - not_null
+
+      - name: match_stage
+        description: Rodada ou estágio da partida dentro da temporada.
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
+
+      - name: league_id
+        description: Chave estrangeira lógica para dim_leagues.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_leagues')
+                field: league_id
+
+      - name: country_id
+        description: Chave estrangeira lógica para dim_countries.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_countries')
+                field: country_id
+
+      - name: home_team_api_id
+        description: Identificador natural do time da casa.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_teams')
+                field: team_api_id
+
+      - name: away_team_api_id
+        description: Identificador natural do time visitante.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_teams')
+                field: team_api_id
+
+      - name: winner_team_api_id
+        description: Identificador do time vencedor; nulo quando a partida termina empatada.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_teams')
+                field: team_api_id
+              config:
+                where: winner_team_api_id is not null
+
+      - name: home_team_score
+        description: Gols marcados pelo time da casa.
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: away_team_score
+        description: Gols marcados pelo time visitante.
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_goals
+        description: Soma dos gols dos dois times na partida.
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: match_result
+        description: Resultado da partida pela perspectiva do mando de campo.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Home Win', 'Away Win', 'Draw']
+
+      - name: total_cards
+        description: Quantidade total de cartões registrados na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_corners
+        description: Quantidade total de escanteios registrados na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_crosses
+        description: Quantidade total de cruzamentos registrados na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_fouls
+        description: Quantidade total de faltas registradas na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_shots_off
+        description: Quantidade total de chutes para fora registrados na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_shots_on
+        description: Quantidade total de chutes no alvo registrados na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+  - name: fact_player_match_stats
+    description: >
+      Tabela fato de desempenho de jogadores com granularidade de uma linha
+      por jogador por partida. Inclui titulares e jogadores encontrados apenas
+      nos eventos da partida.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - match_id
+              - player_api_id
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "total_shots = shots_on_target + shots_off_target"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "sent_offs = second_yellow_cards + red_cards"
+
+    columns:
+      - name: match_player_key
+        description: Chave substituta gerada a partir de match_id e player_api_id.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: match_id
+        description: Chave estrangeira lógica para fact_matches.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fact_matches')
+                field: match_id
+
+      - name: player_id
+        description: Chave estrangeira lógica para dim_players.
+
+      - name: player_api_id
+        description: Identificador natural do jogador usado nos eventos da fonte.
+        data_tests:
+          - not_null
+
+      - name: team_id
+        description: Chave estrangeira lógica para dim_teams quando o time é conhecido.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_teams')
+                field: team_id
+              config:
+                where: team_id is not null
+
+      - name: team_api_id
+        description: Identificador natural do time do jogador na partida.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_teams')
+                field: team_api_id
+              config:
+                where: team_api_id is not null
+
+      - name: match_date
+        description: Data da partida.
+        data_tests:
+          - not_null
+
+      - name: match_season
+        description: Temporada da partida.
+        data_tests:
+          - not_null
+
+      - name: match_stage
+        description: Rodada ou estágio da partida.
+        data_tests:
+          - not_null
+
+      - name: league_id
+        description: Chave estrangeira lógica para dim_leagues.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_leagues')
+                field: league_id
+
+      - name: country_id
+        description: Chave estrangeira lógica para dim_countries.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_countries')
+                field: country_id
+
+      - name: team_side
+        description: Indica se o jogador estava no time da casa ou visitante.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Home', 'Away']
+              config:
+                where: team_side is not null
+
+      - name: lineup_slot
+        description: Posição de 1 a 11 ocupada na escalação original; nula para reservas identificados apenas pelos eventos.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "between 1 and 11"
+              config:
+                where: lineup_slot is not null
+
+      - name: is_starter
+        description: Verdadeiro quando o jogador aparece na escalação inicial.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+
+      - name: goals
+        description: Gols marcados pelo jogador na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: assists
+        description: Assistências registradas para o jogador na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: shots_on_target_non_goal
+        description: Chutes no alvo que não resultaram em gol.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: shots_on_target
+        description: Total de chutes no alvo, incluindo gols.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: shots_off_target
+        description: Chutes para fora realizados pelo jogador.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_shots
+        description: Total de finalizações do jogador na partida.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: fouls_committed
+        description: Faltas cometidas pelo jogador.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: fouls_suffered
+        description: Faltas sofridas pelo jogador.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: yellow_cards
+        description: Cartões amarelos recebidos.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: second_yellow_cards
+        description: Segundos cartões amarelos registrados.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: red_cards
+        description: Cartões vermelhos diretos recebidos.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: cards_received
+        description: Total de eventos de cartão associados ao jogador.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: sent_offs
+        description: Total de expulsões por segundo amarelo ou vermelho direto.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: crosses
+        description: Cruzamentos realizados pelo jogador.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: corners_taken
+        description: Escanteios cobrados pelo jogador.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"

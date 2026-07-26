@@ -1,0 +1,15 @@
+<corner><value><stats><corners>1</corners></stats><event_incident_typefk>867</event_incident_typefk><coordinates><value>1</value><value>1</value></coordinates><elapsed>17</elapsed><subtype>cross_left</subtype><player1>365672</player1><sortorder>3</sortorder><team>8639</team><n>81</n><type>corner</type><id>5480304
+
+<value><stats><corners>1</corners></stats><event_incident_typefk>869</event_incident_typefk><coordinates><value>1</value><value>69</value></coordinates><elapsed>23</elapsed><subtype>cross_right</subtype><player1>468931</player1><sortorder>0</sortorder><team>9829</team><n>103</n><type>corner</type><id>5480357
+
+<value><stats><corners>1</corners></stats><event_incident_typefk>873</event_incident_typefk><coordinates><value>1</value><value>69</value></coordinates><elapsed>27</elapsed><subtype>short_right</subtype><player1>468931</player1><sortorder>0</sortorder><team>9829</team><n>122</n><type>corner</type><id>5480385
+
+<value><stats><corners>1</corners></stats><event_incident_typefk>869</event_incident_typefk><coordinates><value>45</value><value>1</value></coordinates><elapsed>32</elapsed><subtype>cross_right</subtype><player1>365672</player1><sortorder>0</sortorder><team>8639</team><n>149</n><type>corner</type><id>5480429
+
+<value><stats><corners>1</corners></stats><event_incident_typefk>869</event_incident_typefk><coordinates><value>1</value><value>69</value></coordinates><elapsed>33</elapsed><subtype>cross_right</subtype><player1>468931</player1><sortorder>1</sortorder><team>9829</team><n>163</n><type>corner</type><id>5480450
+
+<value><stats><corners>1</corners></stats><event_incident_typefk>867</event_incident_typefk><coordinates><value>1</value><value>1</value></coordinates><elapsed>62</elapsed><subtype>cross_left</subtype><player1>365672</player1><sortorder>0</sortorder><team>8639</team><n>301</n><type>corner</type><id>5481043
+
+<value><stats><corners>1</corners></stats><elapsed_plus>4</elapsed_plus><event_incident_typefk>869</event_incident_typefk><coordinates><value>1</value><value>69</value></coordinates><elapsed>90</elapsed><subtype>cross_right</subtype><player1>488139</player1><sortorder>6</sortorder><team>9829</team><n>480</n><type>corner</type><id>5481537
+
+</corner>

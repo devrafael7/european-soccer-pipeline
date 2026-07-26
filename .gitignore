@@ -1,0 +1,8 @@
+.env
+profiles.yml
+.aws/
+.venv/
+logs/
+target/
+__pycache__/
+data/samples/
