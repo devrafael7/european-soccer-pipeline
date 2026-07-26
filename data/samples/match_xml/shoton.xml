@@ -1,0 +1,19 @@
+<shoton><value><stats><shoton>1</shoton></stats><event_incident_typefk>153</event_incident_typefk><coordinates><value>21</value><value>12</value></coordinates><elapsed>4</elapsed><subtype>shot</subtype><player1>56686</player1><sortorder>0</sortorder><team>9864</team><n>35</n><type>shoton</type><id>5519559</id></value>
+
+<value><stats><blocked>1</blocked></stats><event_incident_typefk>61</event_incident_typefk><coordinates><value>33</value><value>9</value></coordinates><elapsed>5</elapsed><subtype>blocked_shot</subtype><player1>573463</player1><sortorder>4</sortorder><team>9864</team><n>57</n><type>shoton</type><id>5519600</id></value>
+
+<value><stats><shoton>1</shoton></stats><event_incident_typefk>149</event_incident_typefk><coordinates><value>39</value><value>61</value></coordinates><elapsed>22</elapsed><subtype>distance</subtype><player1>482331</player1><sortorder>1</sortorder><team>8370</team><n>195</n><type>shoton</type><id>5520309</id></value>
+
+<value><stats><blocked>1</blocked></stats><event_incident_typefk>61</event_incident_typefk><coordinates><value>25</value><value>62</value></coordinates><elapsed>39</elapsed><subtype>blocked_shot</subtype><player1>46808</player1><sortorder>4</sortorder><team>8370</team><n>312</n><type>shoton</type><id>5521125</id></value>
+
+<value><stats><blocked>1</blocked></stats><event_incident_typefk>61</event_incident_typefk><coordinates><value>25</value><value>54</value></coordinates><elapsed>62</elapsed><subtype>blocked_shot</subtype><player1>482331</player1><sortorder>3</sortorder><team>8370</team><n>484</n><type>shoton</type><id>5522382</id></value>
+
+<value><stats><shoton>1</shoton></stats><event_incident_typefk>135</event_incident_typefk><coordinates><value>16</value><value>7</value></coordinates><elapsed>65</elapsed><subtype>shot</subtype><player1>75445</player1><sortorder>2</sortorder><team>9864</team><n>511</n><type>shoton</type><id>5522478</id></value>
+
+<value><stats><shoton>1</shoton></stats><event_incident_typefk>136</event_incident_typefk><coordinates><value>18</value><value>66</value></coordinates><elapsed>78</elapsed><subtype>header</subtype><player1>150731</player1><sortorder>0</sortorder><team>8370</team><n>575</n><type>shoton</type><id>5523024</id></value>
+
+<value><stats><shoton>1</shoton></stats><event_incident_typefk>136</event_incident_typefk><coordinates><value>18</value><value>4</value></coordinates><elapsed>82</elapsed><subtype>header</subtype><player1>522203</player1><sortorder>1</sortorder><team>9864</team><n>614</n><type>shoton</type><id>5523189</id></value>
+
+<value><stats><shoton>1</shoton></stats><elapsed_plus>1</elapsed_plus><event_incident_typefk>551</event_incident_typefk><coordinates><value>16</value><value>61</value></coordinates><elapsed>90</elapsed><subtype>big chance shot</subtype><player1>111975</player1><sortorder>2</sortorder><team>8370</team><n>670</n><type>shoton</type><id>5523559</id></value>
+
+</shoton>

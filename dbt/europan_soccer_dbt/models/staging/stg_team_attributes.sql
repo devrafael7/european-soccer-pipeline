@@ -1,0 +1,43 @@
+with source as(
+    select * from {{ source('raw', 'team_attributes') }}
+),
+
+renamed as (
+    select 
+        ID::integer as team_id,
+        TEAM_FIFA_API_ID::integer as TEAM_FIFA_API_ID,
+        TEAM_API_ID::integer as TEAM_API_ID,
+        DATE::date as team_founding_date,
+        BUILDUPPLAYSPEED,
+        nullif(trim(BUILDUPPLAYSPEEDCLASS), '') as BUILDUPPLAYSPEEDCLASS,
+        BUILDUPPLAYDRIBBLING,
+        nullif(trim(BUILDUPPLAYDRIBBLINGCLASS), '') as BUILDUPPLAYDRIBBLINGCLASS,
+        BUILDUPPLAYPASSING,
+        nullif(trim(BUILDUPPLAYPASSINGCLASS), '') as BUILDUPPLAYPASSINGCLASS,
+        nullif(trim(BUILDUPPLAYPOSITIONINGCLASS), '') as BUILDUPPLAYPOSITIONINGCLASS,
+        CHANCECREATIONPASSING,
+        nullif(trim(CHANCECREATIONPASSINGCLASS), '') as CHANCECREATIONPASSINGCLASS,
+        CHANCECREATIONCROSSING,
+        nullif(trim(CHANCECREATIONCROSSINGCLASS), '') as CHANCECREATIONCROSSINGCLASS,
+        CHANCECREATIONSHOOTING,
+        nullif(trim(CHANCECREATIONSHOOTINGCLASS), '') as CHANCECREATIONSHOOTINGCLASS,
+        nullif(trim(CHANCECREATIONPOSITIONINGCLASS), '') as CHANCECREATIONPOSITIONINGCLASS,
+        DEFENCEPRESSURE,
+        nullif(trim(DEFENCEPRESSURECLASS), '') as DEFENCEPRESSURECLASS,
+        DEFENCEAGGRESSION,
+        nullif(trim(DEFENCEAGGRESSIONCLASS), '') as DEFENCEAGGRESSIONCLASS,
+        DEFENCETEAMWIDTH,
+        nullif(trim(DEFENCETEAMWIDTHCLASS), '') as DEFENCETEAMWIDTHCLASS,
+        nullif(trim(DEFENCEDEFENDERLINECLASS), '') as DEFENCEDEFENDERLINECLASS,
+        current_timestamp() as loaded_at
+    from source
+)
+
+
+select * from renamed
+
+
+
+
+
+

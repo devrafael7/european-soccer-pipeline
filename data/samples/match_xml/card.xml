@@ -1,0 +1,11 @@
+<card><value><comment>y</comment><stats><ycards>1</ycards></stats><event_incident_typefk>163</event_incident_typefk><elapsed>43</elapsed><card_type>y</card_type><subtype>diving</subtype><player1>40683</player1><sortorder>1</sortorder><team>8588</team><n>245</n><type>card</type><id>4163103
+
+<value><comment>y</comment><stats><ycards>1</ycards></stats><event_incident_typefk>73</event_incident_typefk><elapsed>61</elapsed><card_type>y</card_type><subtype>serious_fouls</subtype><player1>467689</player1><sortorder>3</sortorder><team>4087</team><n>395</n><type>card</type><id>4163512
+
+<value><comment>y</comment><stats><ycards>1</ycards></stats><event_incident_typefk>73</event_incident_typefk><elapsed>67</elapsed><card_type>y</card_type><subtype>serious_fouls</subtype><player1>179891</player1><sortorder>2</sortorder><team>4087</team><n>412</n><type>card</type><id>4163605
+
+<value><comment>r</comment><stats><rcards>1</rcards></stats><elapsed_plus>2</elapsed_plus><event_incident_typefk>507</event_incident_typefk><elapsed>90</elapsed><card_type>r</card_type><subtype>Unsportsmanlike Cond</subtype><player1>40683</player1><sortorder>5</sortorder><team>8588</team><n>590</n><type>card</type><id>4164014
+
+<value><comment>r</comment><stats><rcards>1</rcards></stats><elapsed_plus>2</elapsed_plus><event_incident_typefk>507</event_incident_typefk><elapsed>90</elapsed><card_type>r</card_type><subtype>Unsportsmanlike Cond</subtype><player1>74169</player1><sortorder>6</sortorder><team>4087</team><n>592</n><type>card</type><id>4164017
+
+</card>

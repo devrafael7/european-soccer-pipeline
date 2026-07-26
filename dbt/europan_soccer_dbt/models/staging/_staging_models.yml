@@ -1,0 +1,1008 @@
+version: 2
+models:
+- name: stg_country
+  description: 'Cleaned staging representation of the RAW country source. Grain: one row per country.'
+  columns:
+  - name: country_id
+    description: Primary key that identifies a country.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: country_name
+    description: Cleaned country name.
+    data_type: varchar
+    data_tests:
+    - not_null
+    - unique
+  - name: loaded_at
+    description: Timestamp generated when the staging model is queried or materialized. This is a transformation
+      timestamp, not the original source ingestion time.
+    data_type: timestamp_ltz
+- name: stg_league
+  description: 'Cleaned staging representation of the RAW league source. Grain: one row per league.'
+  columns:
+  - name: league_id
+    description: Primary key that identifies a league.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: country_id
+    description: Identifier of the country in which the league is played.
+    data_type: integer
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('stg_country')
+          field: country_id
+  - name: league_name
+    description: Cleaned league name.
+    data_type: varchar
+    data_tests:
+    - not_null
+  - name: loaded_at
+    description: Timestamp generated when the staging model is queried or materialized.
+    data_type: timestamp_ltz
+- name: stg_match
+  description: 'Cleaned staging representation of the RAW match source, including identifiers, scores, lineups,
+    formation coordinates, XML event payloads, and bookmaker odds. Grain: one row per match.'
+  data_tests:
+  - dbt_utils.expression_is_true:
+      arguments:
+        expression: home_team_api_id <> away_team_api_id
+  columns:
+  - name: match_id
+    description: Primary key of the match record.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: country_id
+    description: Identifier of the country associated with the match.
+    data_type: integer
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('stg_country')
+          field: country_id
+  - name: league_id
+    description: Identifier of the league associated with the match.
+    data_type: integer
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('stg_league')
+          field: league_id
+  - name: match_season
+    description: Season in which the match was played, such as 2015/2016.
+    data_type: varchar
+    data_tests:
+    - not_null
+  - name: match_stage
+    description: Round or stage number within the season.
+    data_type: integer
+    data_tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 1
+  - name: match_date
+    description: Date and time at which the match was played.
+    data_type: timestamp_ntz
+    data_tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        arguments:
+          max_value: current_date
+  - name: match_api_id
+    description: External API identifier of the match.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: home_team_api_id
+    description: External API identifier of the home team.
+    data_type: integer
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('stg_team')
+          field: team_api_id
+  - name: away_team_api_id
+    description: External API identifier of the away team.
+    data_type: integer
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('stg_team')
+          field: team_api_id
+  - name: home_team_goal
+    description: Number of goals scored by the home team.
+    data_type: integer
+    data_tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+  - name: away_team_goal
+    description: Number of goals scored by the away team.
+    data_type: integer
+    data_tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+  - name: home_player_x1
+    description: X coordinate of home lineup position 1.
+    data_type: number
+  - name: home_player_x2
+    description: X coordinate of home lineup position 2.
+    data_type: number
+  - name: home_player_x3
+    description: X coordinate of home lineup position 3.
+    data_type: number
+  - name: home_player_x4
+    description: X coordinate of home lineup position 4.
+    data_type: number
+  - name: home_player_x5
+    description: X coordinate of home lineup position 5.
+    data_type: number
+  - name: home_player_x6
+    description: X coordinate of home lineup position 6.
+    data_type: number
+  - name: home_player_x7
+    description: X coordinate of home lineup position 7.
+    data_type: number
+  - name: home_player_x8
+    description: X coordinate of home lineup position 8.
+    data_type: number
+  - name: home_player_x9
+    description: X coordinate of home lineup position 9.
+    data_type: number
+  - name: home_player_x10
+    description: X coordinate of home lineup position 10.
+    data_type: number
+  - name: home_player_x11
+    description: X coordinate of home lineup position 11.
+    data_type: number
+  - name: home_player_y1
+    description: Y coordinate of home lineup position 1.
+    data_type: number
+  - name: home_player_y2
+    description: Y coordinate of home lineup position 2.
+    data_type: number
+  - name: home_player_y3
+    description: Y coordinate of home lineup position 3.
+    data_type: number
+  - name: home_player_y4
+    description: Y coordinate of home lineup position 4.
+    data_type: number
+  - name: home_player_y5
+    description: Y coordinate of home lineup position 5.
+    data_type: number
+  - name: home_player_y6
+    description: Y coordinate of home lineup position 6.
+    data_type: number
+  - name: home_player_y7
+    description: Y coordinate of home lineup position 7.
+    data_type: number
+  - name: home_player_y8
+    description: Y coordinate of home lineup position 8.
+    data_type: number
+  - name: home_player_y9
+    description: Y coordinate of home lineup position 9.
+    data_type: number
+  - name: home_player_y10
+    description: Y coordinate of home lineup position 10.
+    data_type: number
+  - name: home_player_y11
+    description: Y coordinate of home lineup position 11.
+    data_type: number
+  - name: away_player_x1
+    description: X coordinate of away lineup position 1.
+    data_type: number
+  - name: away_player_x2
+    description: X coordinate of away lineup position 2.
+    data_type: number
+  - name: away_player_x3
+    description: X coordinate of away lineup position 3.
+    data_type: number
+  - name: away_player_x4
+    description: X coordinate of away lineup position 4.
+    data_type: number
+  - name: away_player_x5
+    description: X coordinate of away lineup position 5.
+    data_type: number
+  - name: away_player_x6
+    description: X coordinate of away lineup position 6.
+    data_type: number
+  - name: away_player_x7
+    description: X coordinate of away lineup position 7.
+    data_type: number
+  - name: away_player_x8
+    description: X coordinate of away lineup position 8.
+    data_type: number
+  - name: away_player_x9
+    description: X coordinate of away lineup position 9.
+    data_type: number
+  - name: away_player_x10
+    description: X coordinate of away lineup position 10.
+    data_type: number
+  - name: away_player_x11
+    description: X coordinate of away lineup position 11.
+    data_type: number
+  - name: away_player_y1
+    description: Y coordinate of away lineup position 1.
+    data_type: number
+  - name: away_player_y2
+    description: Y coordinate of away lineup position 2.
+    data_type: number
+  - name: away_player_y3
+    description: Y coordinate of away lineup position 3.
+    data_type: number
+  - name: away_player_y4
+    description: Y coordinate of away lineup position 4.
+    data_type: number
+  - name: away_player_y5
+    description: Y coordinate of away lineup position 5.
+    data_type: number
+  - name: away_player_y6
+    description: Y coordinate of away lineup position 6.
+    data_type: number
+  - name: away_player_y7
+    description: Y coordinate of away lineup position 7.
+    data_type: number
+  - name: away_player_y8
+    description: Y coordinate of away lineup position 8.
+    data_type: number
+  - name: away_player_y9
+    description: Y coordinate of away lineup position 9.
+    data_type: number
+  - name: away_player_y10
+    description: Y coordinate of away lineup position 10.
+    data_type: number
+  - name: away_player_y11
+    description: Y coordinate of away lineup position 11.
+    data_type: number
+  - name: home_player_1
+    description: External API identifier of the player in home lineup position 1.
+    data_type: integer
+  - name: home_player_2
+    description: External API identifier of the player in home lineup position 2.
+    data_type: integer
+  - name: home_player_3
+    description: External API identifier of the player in home lineup position 3.
+    data_type: integer
+  - name: home_player_4
+    description: External API identifier of the player in home lineup position 4.
+    data_type: integer
+  - name: home_player_5
+    description: External API identifier of the player in home lineup position 5.
+    data_type: integer
+  - name: home_player_6
+    description: External API identifier of the player in home lineup position 6.
+    data_type: integer
+  - name: home_player_7
+    description: External API identifier of the player in home lineup position 7.
+    data_type: integer
+  - name: home_player_8
+    description: External API identifier of the player in home lineup position 8.
+    data_type: integer
+  - name: home_player_9
+    description: External API identifier of the player in home lineup position 9.
+    data_type: integer
+  - name: home_player_10
+    description: External API identifier of the player in home lineup position 10.
+    data_type: integer
+  - name: home_player_11
+    description: External API identifier of the player in home lineup position 11.
+    data_type: integer
+  - name: away_player_1
+    description: External API identifier of the player in away lineup position 1.
+    data_type: integer
+  - name: away_player_2
+    description: External API identifier of the player in away lineup position 2.
+    data_type: integer
+  - name: away_player_3
+    description: External API identifier of the player in away lineup position 3.
+    data_type: integer
+  - name: away_player_4
+    description: External API identifier of the player in away lineup position 4.
+    data_type: integer
+  - name: away_player_5
+    description: External API identifier of the player in away lineup position 5.
+    data_type: integer
+  - name: away_player_6
+    description: External API identifier of the player in away lineup position 6.
+    data_type: integer
+  - name: away_player_7
+    description: External API identifier of the player in away lineup position 7.
+    data_type: integer
+  - name: away_player_8
+    description: External API identifier of the player in away lineup position 8.
+    data_type: integer
+  - name: away_player_9
+    description: External API identifier of the player in away lineup position 9.
+    data_type: integer
+  - name: away_player_10
+    description: External API identifier of the player in away lineup position 10.
+    data_type: integer
+  - name: away_player_11
+    description: External API identifier of the player in away lineup position 11.
+    data_type: integer
+  - name: goal
+    description: Raw XML payload containing goal events for the match.
+    data_type: varchar
+  - name: shoton
+    description: Raw XML payload containing shots-on-target events for the match.
+    data_type: varchar
+  - name: shotoff
+    description: Raw XML payload containing shots-off-target events for the match.
+    data_type: varchar
+  - name: foulcommit
+    description: Raw XML payload containing committed-foul events for the match.
+    data_type: varchar
+  - name: card
+    description: Raw XML payload containing card events for the match.
+    data_type: varchar
+  - name: cross
+    description: Raw XML payload containing cross events for the match.
+    data_type: varchar
+  - name: corner
+    description: Raw XML payload containing corner events for the match.
+    data_type: varchar
+  - name: possession
+    description: Raw XML payload containing possession updates for the match.
+    data_type: varchar
+  - name: b365h
+    description: Pre-match decimal odds from Bet365 for a home win.
+    data_type: number
+  - name: b365d
+    description: Pre-match decimal odds from Bet365 for a draw.
+    data_type: number
+  - name: b365a
+    description: Pre-match decimal odds from Bet365 for a away win.
+    data_type: number
+  - name: bwh
+    description: Pre-match decimal odds from Bwin for a home win.
+    data_type: number
+  - name: bwd
+    description: Pre-match decimal odds from Bwin for a draw.
+    data_type: number
+  - name: bwa
+    description: Pre-match decimal odds from Bwin for a away win.
+    data_type: number
+  - name: iwh
+    description: Pre-match decimal odds from Interwetten for a home win.
+    data_type: number
+  - name: iwd
+    description: Pre-match decimal odds from Interwetten for a draw.
+    data_type: number
+  - name: iwa
+    description: Pre-match decimal odds from Interwetten for a away win.
+    data_type: number
+  - name: lbh
+    description: Pre-match decimal odds from Ladbrokes for a home win.
+    data_type: number
+  - name: lbd
+    description: Pre-match decimal odds from Ladbrokes for a draw.
+    data_type: number
+  - name: lba
+    description: Pre-match decimal odds from Ladbrokes for a away win.
+    data_type: number
+  - name: psh
+    description: Pre-match decimal odds from Pinnacle for a home win.
+    data_type: number
+  - name: psd
+    description: Pre-match decimal odds from Pinnacle for a draw.
+    data_type: number
+  - name: psa
+    description: Pre-match decimal odds from Pinnacle for a away win.
+    data_type: number
+  - name: whh
+    description: Pre-match decimal odds from William Hill for a home win.
+    data_type: number
+  - name: whd
+    description: Pre-match decimal odds from William Hill for a draw.
+    data_type: number
+  - name: wha
+    description: Pre-match decimal odds from William Hill for a away win.
+    data_type: number
+  - name: sjh
+    description: Pre-match decimal odds from Stan James for a home win.
+    data_type: number
+  - name: sjd
+    description: Pre-match decimal odds from Stan James for a draw.
+    data_type: number
+  - name: sja
+    description: Pre-match decimal odds from Stan James for a away win.
+    data_type: number
+  - name: vch
+    description: Pre-match decimal odds from BetVictor for a home win.
+    data_type: number
+  - name: vcd
+    description: Pre-match decimal odds from BetVictor for a draw.
+    data_type: number
+  - name: vca
+    description: Pre-match decimal odds from BetVictor for a away win.
+    data_type: number
+  - name: gbh
+    description: Pre-match decimal odds from Gamebookers for a home win.
+    data_type: number
+  - name: gbd
+    description: Pre-match decimal odds from Gamebookers for a draw.
+    data_type: number
+  - name: gba
+    description: Pre-match decimal odds from Gamebookers for a away win.
+    data_type: number
+  - name: bsh
+    description: Pre-match decimal odds from Blue Square for a home win.
+    data_type: number
+  - name: bsd
+    description: Pre-match decimal odds from Blue Square for a draw.
+    data_type: number
+  - name: bsa
+    description: Pre-match decimal odds from Blue Square for a away win.
+    data_type: number
+  - name: loaded_at
+    description: Timestamp generated when the staging model is queried or materialized.
+    data_type: timestamp_ltz
+- name: stg_player
+  description: 'Cleaned staging representation of the RAW player source. Grain: one row per player.'
+  columns:
+  - name: player_id
+    description: Primary key of the player record in the source dataset.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: player_api_id
+    description: External API identifier of the player.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: player_name
+    description: Cleaned player name.
+    data_type: varchar
+    data_tests:
+    - not_null
+  - name: player_fifa_api_id
+    description: FIFA API identifier of the player, when available.
+    data_type: integer
+  - name: player_birthday
+    description: Player date of birth.
+    data_type: date
+    data_tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: '''1960-01-01'''
+          max_value: current_date
+  - name: height
+    description: Player height in centimeters. Non-positive source values are converted to null.
+    data_type: number
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 100
+          max_value: 250
+  - name: weight
+    description: Player weight in pounds. Source values less than or equal to 30 are converted to null.
+    data_type: number
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 30
+          max_value: 300
+          inclusive: false
+  - name: loaded_at
+    description: Timestamp generated when the staging model is queried or materialized.
+    data_type: timestamp_ltz
+- name: stg_player_attributes
+  description: 'Cleaned staging representation of historical player attribute snapshots. Grain: one row per player
+    and attribute snapshot date.'
+
+  columns:
+  - name: player_atb_id
+    description: Primary key of the player-attribute snapshot record.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: player_fifa_api_id
+    description: FIFA API identifier associated with the player snapshot.
+    data_type: integer
+  - name: player_api_id
+    description: External API identifier of the player associated with the snapshot.
+    data_type: integer
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('stg_player')
+          field: player_api_id
+  - name: last_atb_update_date
+    description: Date of the player-attribute snapshot. The double underscore is retained to match the current SQL
+      model.
+    data_type: timestamp_ntz
+    data_tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        arguments:
+          max_value: current_date
+  - name: overall_rating
+    description: Overall player rating at the snapshot date.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: potential
+    description: Potential player rating at the snapshot date.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: preferred_foot
+    description: Player's preferred foot.
+    data_type: varchar
+    data_tests:
+    - accepted_values:
+        arguments:
+          values:
+          - left
+          - right
+  - name: attacking_work_rate
+    description: Source classification of the player's attacking work rate.
+    data_type: varchar
+  - name: defensive_work_rate
+    description: Source classification of the player's defensive work rate.
+    data_type: varchar
+  - name: crossing
+    description: Crossing ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: finishing
+    description: Finishing ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: heading_accuracy
+    description: Heading accuracy rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: short_passing
+    description: Short-passing ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: volleys
+    description: Volley ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: dribbling
+    description: Dribbling ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: curve
+    description: Ball-curve ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: free_kick_accuracy
+    description: Free-kick accuracy rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: long_passing
+    description: Long-passing ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: ball_control
+    description: Ball-control ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: acceleration
+    description: Acceleration rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: sprint_speed
+    description: Sprint-speed rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: agility
+    description: Agility rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: reactions
+    description: Reaction-speed rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: balance
+    description: Balance rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: shot_power
+    description: Shot-power rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: jumping
+    description: Jumping ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: stamina
+    description: Stamina rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: strength
+    description: Physical-strength rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: long_shots
+    description: Long-shot ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: aggression
+    description: Aggression rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: interceptions
+    description: Interception ability rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: positioning
+    description: Attacking-positioning rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: vision
+    description: Vision rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: penalties
+    description: Penalty-taking rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: marking
+    description: Defensive-marking rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: standing_tackle
+    description: Standing-tackle rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: sliding_tackle
+    description: Sliding-tackle rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: gk_diving
+    description: Goalkeeper diving rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: gk_handling
+    description: Goalkeeper handling rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: gk_kicking
+    description: Goalkeeper kicking rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: gk_positioning
+    description: Goalkeeper positioning rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: gk_reflexes
+    description: Goalkeeper reflexes rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+- name: stg_team
+  description: 'Cleaned staging representation of the RAW team source. Grain: one row per team.'
+  columns:
+  - name: team_id
+    description: Primary key of the team record in the source dataset.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: team_api_id
+    description: External API identifier of the team.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: team_fifa_api_id
+    description: FIFA API identifier of the team, when available.
+    data_type: integer
+  - name: team_long_name
+    description: Cleaned full team name.
+    data_type: varchar
+    data_tests:
+    - not_null
+  - name: team_short_name
+    description: Cleaned and uppercased abbreviated team name.
+    data_type: varchar
+    data_tests:
+    - not_null
+  - name: loaded_at
+    description: Timestamp generated when the staging model is queried or materialized.
+    data_type: timestamp_ltz
+- name: stg_team_attributes
+  description: 'Cleaned staging representation of historical team tactical-attribute snapshots. Grain: one row per
+    team and attribute snapshot date.'
+  columns:
+  - name: team_id
+    description: Primary key of the team-attribute snapshot record. This is the source Team_Attributes.ID, not the
+      team dimension key.
+    data_type: integer
+    data_tests:
+    - not_null
+    - unique
+  - name: team_fifa_api_id
+    description: FIFA API identifier associated with the team snapshot.
+    data_type: integer
+  - name: team_api_id
+    description: External API identifier of the team associated with the snapshot.
+    data_type: integer
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('stg_team')
+          field: team_api_id
+  - name: team_founding_date
+    description: Date of the team-attribute snapshot. Despite the current column name, this is not the team's founding
+      date.
+    data_type: date
+    data_tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        arguments:
+          max_value: current_date
+  - name: buildupplayspeed
+    description: Build-up play speed rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: buildupplayspeedclass
+    description: Source class describing build-up play speed.
+    data_type: varchar
+  - name: buildupplaydribbling
+    description: Build-up play dribbling rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: buildupplaydribblingclass
+    description: Source class describing build-up play dribbling.
+    data_type: varchar
+  - name: buildupplaypassing
+    description: Build-up play passing rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: buildupplaypassingclass
+    description: Source class describing build-up play passing.
+    data_type: varchar
+  - name: buildupplaypositioningclass
+    description: Source class describing build-up positioning.
+    data_type: varchar
+  - name: chancecreationpassing
+    description: Chance-creation passing rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: chancecreationpassingclass
+    description: Source class describing chance-creation passing.
+    data_type: varchar
+  - name: chancecreationcrossing
+    description: Chance-creation crossing rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: chancecreationcrossingclass
+    description: Source class describing chance-creation crossing.
+    data_type: varchar
+  - name: chancecreationshooting
+    description: Chance-creation shooting rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: chancecreationshootingclass
+    description: Source class describing chance-creation shooting.
+    data_type: varchar
+  - name: chancecreationpositioningclass
+    description: Source class describing chance-creation positioning.
+    data_type: varchar
+  - name: defencepressure
+    description: Defensive pressure rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: defencepressureclass
+    description: Source class describing defensive pressure.
+    data_type: varchar
+  - name: defenceaggression
+    description: Defensive aggression rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: defenceaggressionclass
+    description: Source class describing defensive aggression.
+    data_type: varchar
+  - name: defenceteamwidth
+    description: Defensive team-width rating.
+    data_type: integer
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 100
+  - name: defenceteamwidthclass
+    description: Source class describing defensive width.
+    data_type: varchar
+  - name: defencedefenderlineclass
+    description: Source class describing the defensive line.
+    data_type: varchar
+  - name: loaded_at
+    description: Timestamp generated when the staging model is queried or materialized.
+    data_type: timestamp_ltz
