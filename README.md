@@ -974,7 +974,7 @@ At least 4 GB of available memory for the Airflow container stack
 
 1. Clone the repository
 
-git clone https://github.com/<your-github-username>/european-soccer-pipeline.git
+git clone https://github.com/devrafael7/european-soccer-pipeline.git
 cd european-soccer-pipeline
 
 2. Configure environment variables
@@ -988,9 +988,6 @@ AIRFLOW_UID=50000
 AWS_REGION=us-east-1
 S3_BUCKET_NAME=<your-s3-bucket>
 S3_RAW_PREFIX=raw
-
-KAGGLE_USERNAME=<your-kaggle-username>
-KAGGLE_KEY=<your-kaggle-api-key>
 
 SNOWFLAKE_ACCOUNT=<your-account-identifier>
 SNOWFLAKE_USER=<your-user>
